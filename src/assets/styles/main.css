@@ -1,0 +1,62 @@
+@import "./base.css";
+a,
+.green {
+  text-decoration: none;
+  color: hsl(160, 100%, 37%);
+  transition: 0.4s;
+  padding: 3px;
+}
+
+.logo {
+  height: 150px;
+  width: 220px;
+}
+.logo img {
+  -o-object-position: center -15px;
+     object-position: center -15px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  width: 100%;
+  height: 100%;
+  margin-right: -15px;
+}
+.logo + span {
+  color: #0172b7;
+}
+
+header .inner {
+  border: 3px solid rgba(255, 0, 0, 0.3411764706);
+  background: rgba(0, 117, 179, 0.0901960784);
+  border-top: none;
+  border-radius: 0 0 15px 15px;
+}
+
+.theform-page .date-fields input {
+  display: inline-block;
+}
+.theform-page .date-fields #dobDay {
+  width: 25%;
+}
+.theform-page .date-fields #dobMonth {
+  width: 25%;
+}
+.theform-page .date-fields #dobYear {
+  width: 45%;
+}
+
+.vgt-table thead th,
+table.vgt-table td {
+  vertical-align: middle;
+  text-align: center;
+}
+
+:root {
+  --bs-btn-hover-bg: #2b6faf;
+}
+:root .nav-pills {
+  --bs-nav-pills-link-active-bg: #2b6faf;
+}
+
+.btn-primary {
+  --bs-btn-bg: #2c6fb5;
+}/*# sourceMappingURL=main.css.map */
