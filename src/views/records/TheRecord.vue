@@ -1,5 +1,5 @@
 <template>
-    
+
   <main>
     <div class="container mt-5">
       <div class="text-center">
@@ -7,23 +7,13 @@
       </div>
     </div>
 
-    <RegistrationCard />
+    <RecordDetails  />
   </main>
 </template>
-<script> 
-import RegistrationCard from '@/components/RegistrationCard.vue';
- 
-export default {
-  name: 'App',
-  data() {
-    return {
-      title: ` المتابعة الصحية للركاب القادمين من موسم الحج 2024`, 
-    }
-  },
-  components: {
-    RegistrationCard
-  }
-}
-</script>
 
-<style></style>
+<script setup>
+import { ref } from "vue"
+import RecordDetails from '@/components/RegistrationCard.vue';
+const title = ref(`المتابعة الصحية للركاب القادمين من موسم الحج 2024`);
+
+</script>

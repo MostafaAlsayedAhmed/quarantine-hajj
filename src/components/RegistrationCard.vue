@@ -1,6 +1,8 @@
 <template>
     <div class="theform-page">
         <div class="container mt-5">
+            {{ $route.params }}
+            isNewRecord: {{ isNewRecord }}
             <form @submit.prevent="submitForm">
 
                 <fieldset v-if="0" class="inputs-group p-3 p-md-4 mb-4 bg-primary-subtle rounded">
@@ -123,8 +125,8 @@
                             <label for="region" class="form-label">Region/Department: {{ form.region }} </label>
                             <select class="form-select" id="region" v-model="form.region">
                                 <option selected value="">Choose...</option>
-                                <option v-for="(cities, cityIndex ) in countries_list[form.governorate]" :key="cityIndex"
-                                    :value="cityIndex">
+                                <option v-for="(cities, cityIndex ) in countries_list[form.governorate]"
+                                    :key="cityIndex" :value="cityIndex">
                                     {{ cities }} </option>
                             </select>
                         </div>
@@ -148,10 +150,13 @@
 
 
                 <div class="mb-4 text-center">
-                    <button type="reset" class="btn btn-outline-warning mx-2">reset</button>
-                    <button type="submit" class="btn btn-success btn-lg px-5 mx-2">Create</button>
-                    <button type="submit" class="btn btn-primary btn-lg px-5 mx-2">Update</button>
-                    <button type="button" class="btn btn-danger btn-lg px-5  mx-2" @click="deleteTrip">Delete</button>
+                    <template v-if="isNewRecord">
+                        <button type="reset" class="btn btn-outline-warning mx-2">reset</button>
+                        <button type="submit" class="btn btn-success btn-lg my-2 px-5 mx-2">Create</button>
+                    </template>
+
+                    <button v-else type="submit" class="btn btn-primary btn-lg px-5 mx-2">Update</button>
+                    <button type="button" class="btn btn-danger btn-lg px-5 my-2 mx-2" @click="deleteTrip">Delete</button>
                 </div>
             </form>
 
@@ -166,13 +171,17 @@
 import { ref, reactive } from "vue"
 import { useFormDataStore } from '@/stores/formData'
 import { storeToRefs } from 'pinia'
+import { useRoute } from 'vue-router'
+const route = useRoute();
 
+const isNewRecord = route.params.recordId === "NewRecord"
+console.log(route.params);
 const formDataStore = useFormDataStore();
 const { _, countries_list } = formDataStore
 const { form, getCountry2 } = storeToRefs(formDataStore);
 
- 
- 
+
+
 
 const confirmationText = "I hereby confirm that I have read and understood the above Questions and have answered them truthfully."
 const note = "If you suffer from any symptoms or change your address Call (105)."
@@ -180,4 +189,4 @@ const note = "If you suffer from any symptoms or change your address Call (105).
 function submitForm() {
     console.log(form); // Replace this with actual submission logic
 }
-</script>@/stores/formData
+</script>

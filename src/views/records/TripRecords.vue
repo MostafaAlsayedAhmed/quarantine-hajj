@@ -3,7 +3,7 @@
 
     <div class="d-flex justify-content-between mb-3">
       <div>
-        <h2> Records of the Trip #333 </h2>
+        <h2> Records of the Trip #{{ $route.params.tripId }} </h2>
       </div>
       <div> <router-link :to="{ path: '/schedule/AddNewTrip/', params: { isNew: true } }" type="button"
           class="btn btn-success">Add New Record</router-link>
@@ -12,12 +12,14 @@
 
     <vue-good-table :columns="columns" :rows="rows" :paginate="true" :lineNumbers="true" :styleClass="tableStyle"
       :search-options="{
-        enabled: true
-      }">
+          enabled: true
+        }">
 
       <template #table-row="props">
-        <span v-if="props.column.field == 'link'" style="font-weight: bold; color: blue;"> 
-          <router-link :to="{ name: 'registration', params: { id: props.row.id }  }"> Edit  </router-link>
+        <span v-if="props.column.field == 'link'" style="font-weight: bold; color: blue;">
+          <router-link :to="{ name: 'Record', params: { tripId: $route.params.tripId, recordId: props.row.id } }"> Edit
+        
+          </router-link>
         </span>
 
       </template>
@@ -26,7 +28,9 @@
 </template>
 
 <script>
+import { defineProps } from "vue";
 import { VueGoodTable } from 'vue-good-table-next';
+// const { tripId, id  } = defineProps(['tripId', 'id']);
 
 export default {
   components: {

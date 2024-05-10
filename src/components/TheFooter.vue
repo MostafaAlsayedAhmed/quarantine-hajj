@@ -1,3 +1,20 @@
+<script setup>
+import { supabase } from "@/supabase"
+import { useAuth } from "@/composables/useAuth"
+
+const { isLoggedIn, router } = useAuth()
+
+const signOut = async () => {
+    let { error } = await supabase.auth.signOut();
+    router.currentRoute.value.path === '/' ?
+        router.replace('/login') :
+        router.replace('/')
+    router.go()
+}
+console.log(router); 
+</script>
+
+
 <template>
     <div class="container">
         <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
@@ -27,7 +44,7 @@
                         <use xlink:href="#bootstrap"></use>
                     </svg>
                 </a>
-                <span class="mb-3 mb-md-0 text-body-secondary">© 2024 {{$route.name}}</span>
+                <span class="mb-3 mb-md-0 text-body-secondary">© 2024 kcfmt-{{ $route.name }}</span>
             </div>
 
             <ul class="nav col-md-4 justify-content-end list-unstyled d-flex align-items-center">
@@ -40,20 +57,21 @@
                 <li class="ms-3"><a class="text-body-secondary" href="#"><svg class="bi" width="24" height="24">
                             <use xlink:href="#facebook"></use>
                         </svg></a></li>
-                         
-                <li v-if="$route.name === 'login' || 'Home' " class="nav-item dropdown ms-5">
+                <!-- isLoggedIn {{ isLoggedIn }} {{ $route.name === 'Home' }} -->
+                <!-- && ($route.name === 'login' || $route.name === 'Home') -->
+                <li v-if="!isLoggedIn" class="nav-item dropdown ms-5">
                     <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         Admin
                     </button>
                     <ul class="dropdown-menu dropdown-menu-dark">
-                        
+
                         <li><router-link class="dropdown-item" to="/login">login</router-link></li>
                         <li><a class="dropdown-item" href="#">Something else here</a></li>
                     </ul>
                 </li>
+
                 <li v-else>
-                    <button class="btn btn-dark ms-5"
-                        @click="$router.push({ name: 'Home', params: { username: 'Eduardo Ali' } })">
+                    <button class="btn btn-dark ms-5" @click.prevent="signOut">
                         Log Out
                     </button>
                 </li>
