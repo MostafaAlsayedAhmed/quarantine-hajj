@@ -9,16 +9,18 @@
                 < Back</router-link>
             </div>
             <div>
-              <h1>{{ !isNewTrip ? ` Update Trip #${tripId}` : 'Add New Trip' }} </h1>
+              <h1>{{ !isNewTrip ? ` Update Trip #` : 'Add New Trip' }}<small class="badge bg-secondary fs-6 "> {{tripId}}</small> </h1>
             </div>
             <div></div>
           </div>
         </div>
       </div>
-      <ul class="overflow-auto bg-dark-subtle" style=" white-space: nowrap; ">
+      <!-- <ul class="overflow-auto bg-dark-subtle" style=" white-space: nowrap; ">
         <li v-for="atrip in tripsList">{{ atrip }}</li>
-      </ul>
-      <pre>trip: {{ trip }}</pre>
+      </ul> -->
+
+
+      <!-- <pre>trip: {{ trip }}</pre> -->
       <div class="container my-5">
         <form @submit.prevent="submitForm">
           <fieldset class="inputs-group p-3 p-md-5 mb-4 border-danger border  -subtle rounded">
@@ -34,7 +36,6 @@
                   <option value="" selected>Choose...</option>
                   <option value="Hurghada"> Hurghada </option>
                   <option value="Safaga"> Safaga </option>
-
                 </select>
               </div>
               <div class="mb-4">
@@ -74,9 +75,11 @@
             <template v-if="isNewTrip">
               <button type="reset" class="btn btn-outline-warning mx-2">reset</button>
               <button type="submit" class="btn btn-success btn-lg px-5 mx-2">Create</button>
-            </template> <template v-else>
-              <button type="submit" class="btn btn-primary btn-lg px-5 mx-2">Update</button>
-              <button type="button" class="btn btn-danger btn-lg px-5  mx-2" @click.prevent="deleteTrip">Delete</button>
+            </template>
+            <template v-else>
+              <button type="submit" class="btn btn-primary btn-lg px-5 m-2">Update</button>
+              <button type="button" class="btn btn-danger btn-lg px-5  m-2"
+                @click.prevent="deleteTheTrip()">Delete</button>
             </template>
           </div>
 
@@ -90,7 +93,7 @@
 
 
 <script setup>
-import { ref, reactive, onMounted, defineProps, readonly } from 'vue'
+import { ref, reactive, onMounted, readonly, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useTripsStore } from '@/stores/trips'
@@ -103,7 +106,7 @@ const isNewTrip = route.params.tripId === "NewTrip"
 const router = useRouter()
 const tripsStore = useTripsStore()
 const { tripsList } = storeToRefs(tripsStore)
-const { addTrip, updateTrip, deleteTrip } = tripsStore
+const { addTrip, getTrip, updateTrip, deleteTrip } = tripsStore
 
 const { tripId } = defineProps({ tripId: Number });
 
@@ -112,7 +115,7 @@ let trip = reactive({
   // id: isNewTrip ? Math.floor((Math.random() * 10000) + 1) : tripId,
   trip_name: '',
   responsible: '',
-  
+
   arrival_port: '',
   trip_number: '',
   arrival_date: '',
@@ -123,44 +126,43 @@ let trip = reactive({
 })
 
 function submitForm() {
-  if (!isNewTrip) {
-    // Perform update logic
-    console.log('Updating', trip);
-    updateTrip(trip);
-  } else {
+  if (!isNewTrip) { // Perform update logic 
+    updateTrip(trip.id, JSON.parse(JSON.stringify(trip)));
 
-    // Perform create logic 
-    addTrip(trip)
+  } else { // Perform create logic 
+    // addTrip(trip);
+    //tripsList.push(trip);
+
   }
-  // Redirect or give feedback
-  console.log(trip);
-//, params: { tripId: '852' }
-   router.push({ name: 'Schedule' }); 
+  // Redirect 
+  router.push({ name: 'Schedule' });
 }
 
-onMounted(() => {
-  console.log(tripId);
+async function deleteTheTrip() {
+  const confirma = confirm( `Are you sure that you want to delete "${trip.trip_name}" Trip ?` );
 
+  if (confirma) {
+    deleteTrip(tripId);
+    await nextTick();
+    // Redirect 
+    router.push({ name: 'Schedule' });
+  }
+}
+
+onMounted(async () => {
   if (tripId && tripId !== "NewTrip") {
     // Load the trip data for editing
-    console.log('Fetching data for id', tripId);
-    // Simulate fetching data
-
-    // setTimeout(() => {
-
-    const theTrip = tripsList.value.find((trip) => trip.id == tripId);
-    console.log(trip);
-    console.log(theTrip);
-
-    trip = reactive(theTrip)
-    trip.id = tripId
-    // }, 1200);
+    const theFetchedTrip = await getTrip(tripId) || {};
+    Object.assign(trip, theFetchedTrip[0]);
+    // console.log('Fetching data for id', tripId);
+    // console.log("theFetchedTrip:", theFetchedTrip[0]);
+    // console.log("trip:",JSON.parse(JSON.stringify(trip)) ); 
+    // const theTrip = tripsList.value.find((trip) => trip.id == tripId);
 
 
   }
   else {
-    console.log("asd");
-
+    console.log("NewTrip");
   }
 })
 </script>

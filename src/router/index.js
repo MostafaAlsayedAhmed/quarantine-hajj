@@ -17,7 +17,7 @@ const router = createRouter({
       path: '/',
       name: 'Home',
       component: HomeView, //Make it the enter point to the user or the admin 
-    
+
     },
 
     {
@@ -27,7 +27,7 @@ const router = createRouter({
       // props: true
     },
 
- 
+
 
     {
       path: '/login',
@@ -38,14 +38,14 @@ const router = createRouter({
     {
       path: '/schedule',
       name: 'Schedule',
-      component: TripsSchedule, 
+      component: TripsSchedule,
     },
 
     {
       path: '/schedule/:tripId',
       name: 'TheTrip',
       component: TheTrip,
-      props: true, 
+      props: true,
     },
 
     {
@@ -61,6 +61,7 @@ const router = createRouter({
       component: () => import('../views/records/TheRecord.vue'),
       props: true
     },
+
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ]
 })
@@ -85,4 +86,3 @@ export default router
 // "/trip/:tripUniqueId/registration/"
 
 // "/login"
- 

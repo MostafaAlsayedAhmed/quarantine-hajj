@@ -3,22 +3,23 @@
 
     <div class="d-flex justify-content-between mb-3">
       <div>
-        <h2>Trips Schedule</h2>
+        <h2> {{ tripsList.length }} Trips Schedule</h2>
       </div>
+
       <div>
         <router-link :to="{ name: 'TheTrip', params: { tripId: 'NewTrip', isNew: true } }" type="button"
           class="btn btn-success">Add New Trip</router-link>
       </div>
     </div>
-
-    <vue-good-table :columns="columns" :rows="rows" :paginate="true" :lineNumbers="true" :styleClass="tableStyle">
+    <h1>{{ tripsList.length }}</h1>
+    <vue-good-table compactMode :columns="columns" :rows="rows" :paginate="true" :lineNumbers="true"
+      :styleClass="tableStyle">
 
       <template #table-row="props">
-
         <span v-if="props.column.field == 'records'">
           <router-link :to="{ name: 'TripRecords', params: { tripId: props.row.id } }">
-            <span style="text-decoration: none;  color: blue; " class="w-100" >   {{ props.row.records }}</span>
-           
+            <span style="text-decoration: none;  color: blue; " class="w-100"> {{ props.row.records }}</span>
+
             <!-- <progress value="50" max="60"></progress> -->
           </router-link>
         </span>
@@ -32,29 +33,6 @@
       </template>
     </vue-good-table>
   </div>
-  <!-- Button trigger modal -->
-  <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-  Launch static backdrop modal
-</button> -->
-
-  <!-- Modal -->
-  <!-- <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Understood</button>
-      </div>
-    </div>
-  </div>
-</div> <RouterView /> -->
-
 
 </template>
 
@@ -94,7 +72,6 @@ let rows = tripsList || ref([]);
 onMounted(() => {
   console.log(" onMounted ");
   getAllTrips()
-
 });
 
 watch(() => rows,
@@ -103,7 +80,44 @@ watch(() => rows,
   }
 )
 
+
+const tripChannel = supabase
+  .channel('my_new_channel_for_trip')
+  .on(
+    'postgres_changes',
+    { event: '*', schema: 'public', table: 'trips' },
+    (payload) => {
+      console.log(payload);
+      const { new: newTrip, old } = payload;
+
+
+
+      if (!Object.hasOwn(old, 'id') && Object.hasOwn(newTrip, 'id')) {
+        console.log("Add New Trip");
+        tripsList.value.push(newTrip);
+      }
+      if (Object.hasOwn(old, 'id') && !Object.hasOwn(newTrip, 'id')) {
+        console.log("Delete Trip");
+
+        tripsList.value = tripsList.value.filter(trip => trip.id !== old.id)
+      }
+
+
+      tripsList.value = tripsList.value.map(trip => {
+        if (trip.id === newTrip.id) {
+          return { ...trip, ...newTrip }
+        }
+        return trip
+      })
+    }
+  )
+  .subscribe()
+
+
+
 </script>
+
+
 <style>
 progress {
   vertical-align: baseline;

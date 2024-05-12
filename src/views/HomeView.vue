@@ -1,8 +1,8 @@
 <script setup>
 import { ref, reactive } from "vue"
 import { supabase } from "@/supabase";
-import { useAuth } from "@/composables/useAuth" 
-const { isLoggedIn, setUser, user, Loading, router, route, RouterView } = useAuth()
+import { useAuth } from "@/composables/useAuth"
+const { isLoggedIn, signOut, setUser, user, Loading, router, route, RouterView } = useAuth()
 
 
 // function handleLogin() {
@@ -43,11 +43,11 @@ const login = async () => {
   <!-- <pre class="w-50" style="background:  #aaaddd;">  {{ $route.name }}</pre> -->
   <div class="home-page" style="background: ghostwhite;">
     <div class="container col-xl-10 col-xxl-8 px-4 py-5">
-      <div class="row align-items-center g-lg-5 py-5">
+      isLoggedIn: {{ isLoggedIn }} <div class="row align-items-center g-lg-5 py-5">
 
         <!-- <pre style=" left: 0; top: 0; width: 350px;" class="position-fixed bg-warning-subtle"> {{ state.data }} <br/> <hr/> {{ state.error }} </pre> -->
 
-
+ 
         <div v-if="!isLoggedIn" class="col-md-10 mx-auto col-lg-5 order-1 or">
           <!-- Admin Login -->
           <div v-if="$route.name === 'login'">
@@ -86,8 +86,8 @@ const login = async () => {
                 <label for="floatingPassword">Seat Number</label>
               </div>
 
-              <button @click="this.$router.push({ name: 'Registration', params: { tripUniqueId: '182' }  })" class="w-100 btn btn-lg btn-primary"
-                type="submit">Continue</button>
+              <button @click="this.$router.push({ name: 'Registration', params: { tripUniqueId: '182' } })"
+                class="w-100 btn btn-lg btn-primary" type="submit">Continue</button>
               <hr class="my-4">
               <small class="text-body-secondary">By clicking Sign up, you agree to the terms of use.</small>
             </form>
@@ -95,15 +95,14 @@ const login = async () => {
         </div>
 
         <div v-else class="col-md-10 mx-auto col-lg-5 order-1  d-flex  gap-2">
-          
+
           <button @click="this.$router.push({ name: 'Schedule' })" class="w-100 btn btn-lg btn-primary"
             type="submit">Back to Schedule</button>
 
-          <button @click="" class="w-50 btn btn-dark"
-          type="button">Log Out</button>
+          <button @click="signOut" class="w-50 btn btn-dark" type="button">Log Out</button>
         </div>
-        
-        <div class="col-lg-7 order-0 text-center text-lg -end"> 
+
+        <div class="col-lg-7 order-0 text-center text-lg -end">
           <div class=" text-center m-auto d-flex">
             <img style=" margin-top: -50px !important;" class="lo go m-auto" alt="Vue logo"
               src="/src/assets/images/logo_transparent.png">

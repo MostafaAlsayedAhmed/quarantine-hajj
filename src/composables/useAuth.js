@@ -1,4 +1,4 @@
-import { RouterView, useRouter, useRoute } from "vue-router";
+import {   RouterView, useRouter, useRoute } from "vue-router";
 import { useUserStore } from "@/stores/user";
 import { supabase } from "@/supabase.js";
 import Loading from "@/components/Loading.vue";
@@ -20,6 +20,13 @@ export function useAuth() {
         return pattern.test(str);
     };
 
+    const signOut = async () => {
+        let { error } = await supabase.auth.signOut();
+        router.currentRoute.value.path === '/' ?
+            router.replace('/login') :
+            router.replace('/')
+        router.go()
+    }
     return {
         isLoggedIn,
         Loading,
@@ -31,5 +38,6 @@ export function useAuth() {
         useRouter,
         user,
         validateEmail,
+        signOut
     };
 }

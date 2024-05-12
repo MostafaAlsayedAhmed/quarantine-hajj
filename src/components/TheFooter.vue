@@ -2,16 +2,7 @@
 import { supabase } from "@/supabase"
 import { useAuth } from "@/composables/useAuth"
 
-const { isLoggedIn, router } = useAuth()
-
-const signOut = async () => {
-    let { error } = await supabase.auth.signOut();
-    router.currentRoute.value.path === '/' ?
-        router.replace('/login') :
-        router.replace('/')
-    router.go()
-}
-console.log(router); 
+const { router, isLoggedIn, signOut } = useAuth()
 </script>
 
 
