@@ -12,7 +12,7 @@
           class="btn btn-success">Add New Trip</router-link>
       </div>
     </div>
-
+ 
     <vue-good-table compactMode :columns="columns" :rows="rows" :paginate="true" :lineNumbers="true"
       :styleClass="tableStyle">
 
@@ -26,9 +26,9 @@
             </strong>
           </router-link>
         </span>
-
-        <span v-if="props.column.field == 'arrival_date'">{{ props.row.arrival_date?.split("T")[0] }} <strong>{{
-          props.row.arrival_date?.split("T")[1].slice(0, -3) }}</strong></span>
+        <!-- ?.split("T")[1].slice(0, -3) -->
+        <span v-if="props.column.field == 'arrival_date'">{{ props.row.arrival_date?.split("T")[0]   }} <strong>{{
+          props.row.arrival_date?.split("T")[1]   }}</strong></span>
         <span v-if="props.column.field == 'link'" style="font-weight: bold; color: blue;">
           <router-link :to="{ name: 'TheTrip', params: { tripId: props.row.id }}">
             Edit

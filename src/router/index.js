@@ -67,7 +67,9 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log("beforeEach:", to, from);
+  // console.log("beforeEach:", to, from);
+
+
   // if (to.name === 'team-members') {
   //     next()
   // } else {
@@ -77,7 +79,7 @@ router.beforeEach((to, from, next) => {
 });
 
 router.afterEach((to, from) => {
-  console.log("afterEach:", to, from);
+  // console.log("afterEach:", to, from);
 })
 
 export default router

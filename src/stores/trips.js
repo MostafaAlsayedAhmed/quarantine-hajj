@@ -1,5 +1,9 @@
 import { defineStore } from 'pinia'
-import { supabase } from "@/supabase"
+import { getFirestore, addDoc, collection, doc, getDoc, setDoc, getDocs, deleteDoc } from "firebase/firestore";
+import firebaseApp from '../firebase'
+
+const db = getFirestore(firebaseApp);
+const tripsCol = collection(db, 'trips');
 
 const useTripsStore = defineStore("trips", {
     state: () => ({
@@ -10,45 +14,12 @@ const useTripsStore = defineStore("trips", {
 
     actions: {
         subscribeToTripsChannel() {
-            return supabase
-                .channel('my_new_channel_for_trip')
-                .on(
-                    'postgres_changes',
-                    { event: '*', schema: 'public', table: 'trips2' },
-                    (payload) => {
-                        console.log(payload);
-                        const { new: newTrip, old } = payload;
-
-                        if (!Object.hasOwn(old, 'id') && Object.hasOwn(newTrip, 'id')) {
-                            console.log("Add New Trip");
-                            this.tripsList.push(newTrip);
-                        }
-                        if (Object.hasOwn(old, 'id') && !Object.hasOwn(newTrip, 'id')) {
-                            console.log("Delete Trip");
-                            this.tripsList = this.tripsList.filter(trip => trip.id !== old.id)
-                        }
-
-
-                        this.tripsList = this.tripsList.map(trip => {
-                            if (trip.id === newTrip.id) {
-                                return { ...trip, ...newTrip }
-                            }
-                            return trip
-                        })
-                    }
-                )
-                .subscribe()
+            console.log("subscribeToTripsChannel");
         },
 
         async createTripPartition(trip_id) {
             try {
-                let { data, error } = await supabase
-                    .rpc('test', {
-                        trip_id
-                    })
-                if (error) throw error
-                else console.log(data)
-
+                console.log("createTripPartition");
             } catch (error) {
                 console.error(error)
             }
@@ -56,15 +27,22 @@ const useTripsStore = defineStore("trips", {
 
         async getAllTrips() {
             try {
-                let { data: trips, error } = await supabase
-                    .from('trips2')
-                    .select('*')
-                //  .range(0, 4)
+                async function getTrips() {
+                    const tripSnapshot = await getDocs(tripsCol);
+                    const tripList = tripSnapshot.docs.map(doc => {
+                        let data = doc.data();
+                        data.id = doc.id;
+                        return data
+                    });
 
-                if (trips) {
-                    this.tripsList = trips
-                    console.log(trips)
-                    return trips
+                    return tripList;
+                }
+
+                const allTrips = await getTrips()
+
+                if (allTrips) {
+                    this.tripsList = allTrips
+                    console.log(allTrips)
                 }
             } catch (error) {
                 console.error(error)
@@ -74,21 +52,13 @@ const useTripsStore = defineStore("trips", {
 
         async addTrip(tripObj) {
             console.log('Creating...');
-            // this.tripsList.push(tripObj)
-            try {
-                const { data, error: err } = await supabase
-                    .from('trips2')
-                    .insert(tripObj) //[tripObj]  
-                    .select()
 
-                if (data) {
-                    console.log("Created");
-                    return data
-                }
-                else throw err
-            } catch (err) {
-                console.error(err)
-                return err
+            try {
+                const docRef = await addDoc(collection(db, "trips"), tripObj);
+                console.log("Document written with ID: ", docRef.id);
+                return docRef.id
+            } catch (e) {
+                console.error("Error adding document: ", e);
             }
         },
 
@@ -96,55 +66,36 @@ const useTripsStore = defineStore("trips", {
             console.log('Reading...');
 
             try {
-                const { data: trip, error: err } = await supabase
-                    .from('trips2')
-                    .select("*")
-                    .eq('id', tripId)
+                const docRef = doc(db, "trips", tripId);
+                const docSnap = await getDoc(docRef);
 
-                if (trip) {
-                    return trip
+                if (docSnap.exists()) {
+                    console.log("Document data:", docSnap.data());
+                    return docSnap.data()
                 } else {
-                    throw err
+                    // docSnap.data() will be undefined in this case 
+                    throw Error("No such document for that ID!", tripId)
                 }
             } catch (err) {
                 console.error(err)
-                return []
+                return {}
             }
         },
 
         async updateTrip(id, tripObj) {
             console.log('Updating', id, tripObj);
             try {
-                const { data, error } = await supabase
-                    .from('trips2')
-                    // .update({ records: 88 })
-                    .update(tripObj)
-                    .eq('id', id)
-                    .select()
-                if (data) {
-                    console.log(data);
-                    return data
-                } else {
-                    throw error
-                }
+                await setDoc(doc(db, "trips", id), tripObj);
+
             } catch (err) {
                 console.error(err)
-                return []
             }
         },
 
         async deleteTrip(id) {
 
             try {
-                const { error } = await supabase
-                    .from('trips2')
-                    .delete()
-                    .eq('id', id)
-                if (error) {
-                    throw error
-                } else {
-                    console.log('Deleted', id);
-                }
+                await deleteDoc(doc(db, "trips", id));
 
             } catch (err) {
                 console.error(err)

@@ -1,5 +1,9 @@
 import { defineStore } from 'pinia'
-import { supabase } from "@/supabase"
+import { getFirestore, addDoc, collection, doc, getDoc, setDoc, getDocs, deleteDoc } from "firebase/firestore";
+import firebaseApp from '../firebase'
+
+const db = getFirestore(firebaseApp);
+const passengersCol = collection(db, 'passengers');
 
 const usePassengersStore = defineStore('passengers', {
     state: () => ({
@@ -11,52 +15,27 @@ const usePassengersStore = defineStore('passengers', {
 
     actions: {
         subscribeToPassengersChannel() {
-            return supabase
-                .channel('my_new_channel_for_passenger')
-                .on(
-                    'postgres_changes',
-                    { event: '*', schema: 'public', table: 'passengers' },
-                    (payload) => {
-                        console.log(payload);
-                        const { new: newPassenger, old } = payload;
-
-                        if (!Object.hasOwn(old, 'id') && Object.hasOwn(newPassenger, 'id')) {
-                            console.log("Add New Passenger");
-                            this.passengersList.push(newPassenger);
-                        }
-                        if (Object.hasOwn(old, 'id') && !Object.hasOwn(newPassenger, 'id')) {
-                            console.log("Delete Passenger");
-                            this.passengersList = this.passengersList.filter(passenger => passenger.id !== old.id)
-                        }
-
-
-                        this.passengersList = this.passengersList.map(passenger => {
-                            if (passenger.id === newPassenger.id) {
-                                return { ...passenger, ...newPassenger }
-                            }
-                            return passenger
-                        })
-                    }
-                )
-                .subscribe()
+            console.log("subscribeToPassengersChannel");
         },
 
         async getAllPassengers(tripId) {
-            // console.log(tripId);
-            // return
+          
             try {
-                let { data: passengers, error } = await supabase
-                    .from('passengers_' + tripId)
-                    .select('*')
-                    // .select('passengers')
-                    // .eq('id', tripId)
-                    // .range(0, 9)
-
-                console.log(passengers);
-                if (passengers) {
-                    this.passengersList = passengers 
-                    return  passengers
+                const passengersListCollection = collection(db, "passengers", tripId, "list");
+                const listSnapshot = await getDocs(passengersListCollection);
+                const passengersList = listSnapshot.docs.map(doc => {
+                    let data = doc.data();
+                    data.id = doc?.id;
+                    return data
+                });  
+                 
+                if (passengersList) {
+                    console.log("Document data:", passengersList.length, passengersList);
+                    this.passengersList = passengersList 
+                } else { 
+                    throw Error("No such document for that ID!", tripId)
                 }
+ 
             } catch (error) {
                 console.error(error)
                 return []

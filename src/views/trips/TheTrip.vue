@@ -121,7 +121,7 @@ const { tripId } = defineProps({ tripId: Number });
 
 let trip = reactive({
   // id: isNewTrip ? Math.floor((Math.random() * 10000) + 1) : tripId,
-  // records: 0,
+  records: 0,
   trip_name: '',
   responsible: '',
 
@@ -130,22 +130,27 @@ let trip = reactive({
   arrival_date: '',
   transport_agency: '',
   passengers: 0,
+  records: 0,
   done: false,
   link: '',
+  created_at: new Date().toLocaleString(),
+//  id: ''
+
+
 })
 
 async function submitForm() {
   if (!isNewTrip) { // Perform update logic 
-    updateTrip(trip.id, JSON.parse(JSON.stringify(trip)));
+    updateTrip(tripId, JSON.parse(JSON.stringify(trip)));
 
   } else { // Perform create logic 
-    const theTrip = await addTrip(trip);
-    console.log(theTrip[0]?.id); 
-    createTripPartition(theTrip[0]?.id)
+    await addTrip(trip);
+    console.log("The Trip Added");
+    // createTripPartition(theTrip)
   }
 
   // Redirect 
-  // router.push({ name: 'Schedule' });
+ router.push({ name: 'Schedule' });
 }
 
 async function deleteTheTrip() {
@@ -163,7 +168,8 @@ onMounted(async () => {
   if (tripId && tripId !== "NewTrip") {
     // Load the trip data for editing
     const theFetchedTrip = await getTrip(tripId) || {};
-    Object.assign(trip, theFetchedTrip[0]);
+    console.log(theFetchedTrip);
+    Object.assign(trip, theFetchedTrip );
     // console.log('Fetching data for id', tripId);
     // console.log("theFetchedTrip:", theFetchedTrip[0]);
     // console.log("trip:",JSON.parse(JSON.stringify(trip)) ); 

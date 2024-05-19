@@ -14,6 +14,7 @@
     "@popperjs/core": "^2.11.8",
     "@supabase/supabase-js": "^2.43.1",
     "bootstrap": "^5.3.3",
+    "firebase": "^10.12.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
     "vue-good-table-next": "^0.2.1",
