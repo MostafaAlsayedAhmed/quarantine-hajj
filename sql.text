@@ -1,0 +1,21 @@
+
+#Edit 'create_passenger_table' function
+
+BEGIN
+    EXECUTE format('CREATE TABLE %I (
+        passenger_id uuid NOT NULL DEFAULT gen_random_uuid(),
+        created_at timestamp with time zone NOT NULL DEFAULT now(),
+        full_name text NULL,
+        passport_number text NULL,
+        seat_number text NULL,
+        phone_number text NULL,
+        governorate text NULL,
+        region text NULL,
+        address text NULL,
+        email text NULL,
+        CONSTRAINT %I_pkey PRIMARY KEY (passenger_id)
+        ) TABLESPACE pg_default', 
+        'passengers_' || NEW.id, 
+        'passengers_' || NEW.id);
+    RETURN NEW;
+END;

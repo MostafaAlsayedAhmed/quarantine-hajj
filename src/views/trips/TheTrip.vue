@@ -2,22 +2,24 @@
   <div class="thetrip-page">
     <div class="container">
       <div class="container mt-5">
-        <div class="text-center">
+        <!-- <pre> {{ trip }}</pre>  <hr>-->
 
+        <!-- <pre> {{ tripsList }}</pre> -->
+
+        <div class="text-center">
           <div class="d-flex align-content-between justify-content-between align-items-center">
             <div><router-link to="/schedule" type="button" class="btn btn-dark">
                 < Back</router-link>
             </div>
             <div>
-              <h1>{{ !isNewTrip ? ` Update Trip #` : 'Add New Trip' }}<small class="badge bg-secondary fs-6 "> {{tripId}}</small> </h1>
+              <h1>{{ !isNewTrip ? ` Update Trip #` : 'Add New Trip' }}<small class="badge bg-secondary fs-6 ">
+                  {{ tripId }}</small> </h1>
             </div>
             <div></div>
           </div>
         </div>
       </div>
-      <!-- <ul class="overflow-auto bg-dark-subtle" style=" white-space: nowrap; ">
-        <li v-for="atrip in tripsList">{{ atrip }}</li>
-      </ul> -->
+
 
 
       <!-- <pre>trip: {{ trip }}</pre> -->
@@ -43,9 +45,15 @@
                 <input type="datetime-local" id="dateOfArrival" v-model="trip.arrival_date" class="form-control">
               </div>
 
-              <div class="mb-4">
-                <label for="records">Records</label>
-                <input type="number" id="records" v-model="trip.records" class="form-control">
+              <div class="mb-4 d-flex gap-2">
+                <div>
+                  <label for="records">Records</label>
+                  <input disabled type="number" id="records" v-model="trip.records" class="form-control">
+                </div>
+                <div>
+                  <label for="passengers">Passengers</label>
+                  <input type="number" id="passengers" v-model="trip.passengers" class="form-control">
+                </div>
               </div>
 
               <div class="mb-4">
@@ -106,13 +114,14 @@ const isNewTrip = route.params.tripId === "NewTrip"
 const router = useRouter()
 const tripsStore = useTripsStore()
 const { tripsList } = storeToRefs(tripsStore)
-const { addTrip, getTrip, updateTrip, deleteTrip } = tripsStore
+const { createTripPartition, addTrip, getTrip, updateTrip, deleteTrip } = tripsStore
 
 const { tripId } = defineProps({ tripId: Number });
 
 
 let trip = reactive({
   // id: isNewTrip ? Math.floor((Math.random() * 10000) + 1) : tripId,
+  // records: 0,
   trip_name: '',
   responsible: '',
 
@@ -120,28 +129,29 @@ let trip = reactive({
   trip_number: '',
   arrival_date: '',
   transport_agency: '',
-  records: 0,
+  passengers: 0,
   done: false,
   link: '',
 })
 
-function submitForm() {
+async function submitForm() {
   if (!isNewTrip) { // Perform update logic 
     updateTrip(trip.id, JSON.parse(JSON.stringify(trip)));
 
   } else { // Perform create logic 
-    // addTrip(trip);
-    //tripsList.push(trip);
-
+    const theTrip = await addTrip(trip);
+    console.log(theTrip[0]?.id); 
+    createTripPartition(theTrip[0]?.id)
   }
+
   // Redirect 
-  router.push({ name: 'Schedule' });
+  // router.push({ name: 'Schedule' });
 }
 
 async function deleteTheTrip() {
-  const confirma = confirm( `Are you sure that you want to delete "${trip.trip_name}" Trip ?` );
+  const confirmAlert = confirm(`Are you sure that you want to delete "${trip.trip_name}" Trip ?`);
 
-  if (confirma) {
+  if (confirmAlert) {
     deleteTrip(tripId);
     await nextTick();
     // Redirect 
