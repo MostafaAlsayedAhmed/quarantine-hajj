@@ -4,11 +4,43 @@ import firebaseApp from '../firebase'
 
 const db = getFirestore(firebaseApp);
 const passengersCol = collection(db, 'passengers');
+function getToday() {
+    const date = new Date();
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0'); //January is 0!
+    const yyyy = date.getFullYear();
+    const today = yyyy + '-' + mm + '-' + dd;
+    return today;
+}
+
 
 const usePassengersStore = defineStore('passengers', {
     state: () => ({
+        trip: {
+            tripNumber: "A 255",
+            portOfArrival: 'Hurghada',
+            dateArrival: getToday(),
+            transportAgency: 'AMC air',
+        },
+
         passengersList: [],
+        passenger: {
+            full_name: '',
+            passport_number: '',
+
+            seat_number: '',
+            phone_number: '',
+
+            nationality: 'egyption',
+            governorate: '',
+            region: '',
+            address: '',
+            dobDay: '',
+            confirmation: false,
+            created_at: new Date().toLocaleString()
+        },
     }),
+
 
     getters: {}, // = computed() properties of the store 
 
@@ -18,64 +50,59 @@ const usePassengersStore = defineStore('passengers', {
             console.log("subscribeToPassengersChannel");
         },
 
-        async getAllPassengers(tripId) {
-          
+        async getAllPassengers(recordId) {
+
             try {
-                const passengersListCollection = collection(db, "passengers", tripId, "list");
-                const listSnapshot = await getDocs(passengersListCollection);
+                const passengersListCol = collection(db, "passengers", recordId, "list");
+                const listSnapshot = await getDocs(passengersListCol);
                 const passengersList = listSnapshot.docs.map(doc => {
                     let data = doc.data();
                     data.id = doc?.id;
                     return data
-                });  
-                 
+                });
+
                 if (passengersList) {
-                    console.log("Document data:", passengersList.length, passengersList);
-                    this.passengersList = passengersList 
-                } else { 
-                    throw Error("No such document for that ID!", tripId)
+                    // console.log("Document data:", passengersList.length, passengersList);
+                    this.passengersList = passengersList
+                } else {
+                    throw Error("No such document for that ID!", recordId)
                 }
- 
+
             } catch (error) {
                 console.error(error)
                 return []
             }
         },
 
-        async addPassenger(passengerObj) {
+        async addPassenger(recordId, passengerObj) {
             console.log('Creating...');
-            try {
-                const { data, error: err } = await supabase
-                    .from('passengers')
-                    .insert(passengerObj) //[passengerObj]  
-                    .select()
+            const passengersListCol = collection(db, "passengers", recordId, "list");
 
-                if (data) {
-                    console.log("Created");
-                }
-            } catch (err) {
-                console.error(err)
-                return []
+            try {
+                const docRef = await addDoc(passengersListCol, passengerObj);
+                console.log("Document written with ID: ", docRef.id);
+                return docRef.id
+            } catch (e) {
+                console.error("Error adding document: ", e);
             }
         },
 
-        async getPassenger(passengerId) {
+        async getPassenger(tripId, passengerId) {
             console.log('Reading...');
-
             try {
-                const { data: passenger, error: err } = await supabase
-                    .from('passengers')
-                    .select("*")
-                    .eq('id', passengerId)
+                const docRef = doc(db, "passengers", tripId, "list", passengerId);
+                const docSnap = await getDoc(docRef);
 
-                if (passenger) {
-                    return passenger
+                if (docSnap.exists()) {
+                    console.log("Document data:", docSnap.data());
+                    return docSnap.data()
                 } else {
-                    throw err
+                    // docSnap.data() will be undefined in this case 
+                    throw Error("No such document for that ID!", tripId)
                 }
             } catch (err) {
                 console.error(err)
-                return []
+                return {}
             }
         },
 

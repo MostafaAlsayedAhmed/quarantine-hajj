@@ -2,8 +2,8 @@
     <div class="theform-page">
         <div class="container mt-5">
             {{ $route.params }}
-            isNewRecord: {{ isNewRecord }}
-            <form @submit.prevent="submitForm">
+            formData: {{ formData }}
+            <form>
 
                 <fieldset v-if="0" class="inputs-group p-3 p-md-4 mb-4 bg-primary-subtle rounded">
                     <div class="row row-cols-md-2 row-cols-lg-4 ">
@@ -33,10 +33,10 @@
                 </fieldset>
 
                 <ul v-else class="row list list-inline p-3 p-md-4 mb-4 bg-primary-subtle rounded">
-                    <li class="col"> <strong>Trip Number:</strong> {{ form.tripNumber }}</li>
-                    <li class="col"> <strong>Port of Arrival:</strong> {{ form.portOfArrival }}</li>
-                    <li class="col"> <strong>Date of Arrival:</strong> {{ form.dateArrival }}</li>
-                    <li class="col"> <strong>Transport Agency:</strong> {{ form.transportAgency }}</li>
+                    <li class="col"> <strong>Trip Number:</strong> {{ trip.tripNumber }}</li>
+                    <li class="col"> <strong>Port of Arrival:</strong> {{ trip.portOfArrival }}</li>
+                    <li class="col"> <strong>Date of Arrival:</strong> {{ trip.dateArrival }}</li>
+                    <li class="col"> <strong>Transport Agency:</strong> {{ trip.transportAgency }}</li>
                 </ul>
 
                 <fieldset class="inputs-group p-3 p-md-5 my-4 border-danger border   rounded">
@@ -149,44 +149,35 @@
                 </fieldset>
 
 
-                <div class="mb-4 text-center">
-                    <template v-if="isNewRecord">
-                        <button type="reset" class="btn btn-outline-warning mx-2">reset</button>
-                        <button type="submit" class="btn btn-success btn-lg my-2 px-5 mx-2">Create</button>
-                    </template>
-
-                    <button v-else type="submit" class="btn btn-primary btn-lg px-5 mx-2">Update</button>
-                    <button type="button" class="btn btn-danger btn-lg px-5 my-2 mx-2" @click="deleteTrip">Delete</button>
-                </div>
+                <slot></slot>
             </form>
-
-
-
 
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, reactive } from "vue"
-import { useFormDataStore } from '@/stores/formData'
+import { reactive } from 'vue'
 import { storeToRefs } from 'pinia'
-import { useRoute } from 'vue-router'
-const route = useRoute();
 
-const isNewRecord = route.params.recordId === "NewRecord"
-console.log(route.params);
+import { useFormDataStore } from '@/stores/formData'
 const formDataStore = useFormDataStore();
-const { _, countries_list } = formDataStore
-const { form, getCountry2 } = storeToRefs(formDataStore);
+const { _, countries_list } = formDataStore;
+
+
+import { usePassengersStore } from '@/stores/passengers'
+const passengersStore = usePassengersStore()
+const { passenger, trip } = storeToRefs(passengersStore)
 
 
 
+const { formData: data } = defineProps(['formData'])
 
 const confirmationText = "I hereby confirm that I have read and understood the above Questions and have answered them truthfully."
 const note = "If you suffer from any symptoms or change your address Call (105)."
 
-function submitForm() {
-    console.log(form); // Replace this with actual submission logic
-}
+const form = reactive({
+    governorate: '',
+    region: '',
+})
 </script>

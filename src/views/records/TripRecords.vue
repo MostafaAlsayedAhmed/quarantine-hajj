@@ -1,11 +1,13 @@
 <template>
   <div class="container my-5">
-    <pre> {{ rows }}</pre>  
+    <pre> {{ rows }}</pre>
     <div class="d-flex justify-content-between mb-3">
       <div>
         <h2> Records of the Trip #{{ $route.params.tripId }} </h2>
       </div>
-      <div> <router-link :to="{ path: `/schedule/${$route.params.tripId}/AddNewRecord/`, params: { isNew: true } }"
+      <div>
+        <!-- name: 'Record', -->
+        <router-link :to="{ path: `/schedule/${$route.params.tripId}/records/NewRecord`, params: { isNew: true } }"
           type="button" class="btn btn-success">Add New Record</router-link>
       </div>
     </div>
@@ -51,12 +53,12 @@ const columns = ref([
   { label: 'Address', field: 'address' },
   { label: '-', field: 'link', html: true },
 ]);
-const rows =  ref([]);
- 
+const rows = ref([]);
+
 onMounted(async () => {
-  await getAllPassengers(route.params.tripId) 
+  await getAllPassengers(route.params.tripId)
   // console.log(passengersList.value );
-   rows.value = passengersList.value
+  rows.value = passengersList.value
 });
 
 subscribeToPassengersChannel(); 

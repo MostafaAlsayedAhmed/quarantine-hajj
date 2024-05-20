@@ -54,9 +54,26 @@ const useTripsStore = defineStore("trips", {
             console.log('Creating...');
 
             try {
-                const docRef = await addDoc(collection(db, "trips"), tripObj);
-                console.log("Document written with ID: ", docRef.id);
-                return docRef.id
+                const tripDocRef = await addDoc(collection(db, "trips"), tripObj);
+                console.log("Document written with ID: ", tripDocRef.id);
+
+                if (tripDocRef) {
+                      // Create a specific document ID in the "Passengers" collection
+                    const passengerDocRef = doc(db, "passengers", tripDocRef.id);
+                    await setDoc(passengerDocRef, {});
+
+                    // Add a document with an auto-generated ID to the "list" sub-collection
+                    const passengersListCol = collection(db, "passengers", tripDocRef.id, "list");
+                    const listDocRef = await addDoc(passengersListCol);
+
+                    console.log("Passenger document successfully written with ID: ", tripDocRef.id);
+                    console.log("List document written with ID: ", listDocRef.id);
+
+
+
+                    // return { passenger: passengerDocRef, trip: docRef.id }
+                }
+
             } catch (e) {
                 console.error("Error adding document: ", e);
             }

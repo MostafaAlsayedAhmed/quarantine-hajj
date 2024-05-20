@@ -57,7 +57,7 @@ header .inner {
 
 .vgt-table thead th,
 table.vgt-table td {
-  vertical-align: middle;
+  vertical-align: middle !important;
   text-align: center;
 }
 :root {

@@ -113,8 +113,8 @@ const isNewTrip = route.params.tripId === "NewTrip"
 
 const router = useRouter()
 const tripsStore = useTripsStore()
-const { tripsList } = storeToRefs(tripsStore)
-const { createTripPartition, addTrip, getTrip, updateTrip, deleteTrip } = tripsStore
+// const { tripsList } = storeToRefs(tripsStore)
+const { addTrip, getTrip, updateTrip, deleteTrip } = tripsStore
 
 const { tripId } = defineProps({ tripId: Number });
 
