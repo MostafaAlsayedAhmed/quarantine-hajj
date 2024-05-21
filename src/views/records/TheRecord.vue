@@ -6,21 +6,19 @@
         <h1>{{ title }}</h1>
       </div>
     </div>
-    isNewRecord: {{ isNewRecord }}
-    <br>
-    {{ passenger }}
-    <RegistrationCardForm :formData="passenger" >
+
+    <RegistrationCardForm :formData="passenger" :tripDetails="trip">
 
       <div>
         <div class="mb-4 text-center">
           <template v-if="isNewRecord">
             <button type="reset" class="btn btn-outline-warning mx-2">reset</button>
-            <button type="submit" @submit.prevent="submitForm"
+            <button type="submit" @click.prevent="submitForm"
               class="btn btn-success btn-lg my-2 px-5 mx-2">Create</button>
           </template>
 
           <template v-else>
-            <button type="submit" @submit.prevent="submitForm" class="btn btn-primary btn-lg px-5 mx-2">Update</button>
+            <button type="submit" @click.prevent="submitForm" class="btn btn-primary btn-lg px-5 mx-2">Update</button>
             <button type="button" @click.prevent="deleteThePassenger"
               class="btn btn-danger btn-lg px-5 my-2 mx-2">Delete</button>
           </template>
@@ -50,30 +48,30 @@ const { addPassenger, getPassenger, updatePassenger, deletePassenger } = passeng
 const route = useRoute();
 const router = useRouter();
 const { tripId, recordId } = defineProps(['tripId', 'recordId']);
-
-console.log("params:", route.params);
   
 const isNewRecord = recordId === "NewRecord";
 
 async function submitForm() {
-  if (!isNewRecord) { // Perform update logic 
-    updatePassenger(recordId, JSON.parse(JSON.stringify(passenger)));
+  if (!isNewRecord) { // Perform update logic   
+
+    const passengerObj = JSON.parse(JSON.stringify(passenger.value));
+    // console.log(passenger.value); console.log(passengerObj); return
+    updatePassenger(tripId, recordId, passengerObj);
 
   } else { // Perform create logic 
-    await addPassenger(passenger);
+    await addPassenger(tripId, passenger.value);
     console.log("The Trip Added");
-    // createTripPartition(theTrip)
   }
 
   // Redirect 
-  router.push({ name: 'Schedule' });
+  router.push({ name: 'TripRecords', params: { tripId } });
 }
 
 async function deleteThePassenger() {
-  const confirmAlert = confirm(`Are you sure that you want to delete "${passenger.full_name}"?`);
+  const confirmAlert = confirm(`Are you sure that you want to delete "${passenger.value.full_name}"?`);
 
   if (confirmAlert) {
-    deleteTrip(recordId);
+    deletePassenger(recordId);
     await nextTick();
     // Redirect 
     router.push({ name: 'TripRecords' });
@@ -85,11 +83,10 @@ onMounted(async () => {
     // Load the trip data for editing
     const theFetchedRecord = await getPassenger(tripId, recordId) || {};
 
-    console.log(theFetchedRecord);
+    // console.log(theFetchedRecord);
     // console.log(JSON.stringify(theFetchedRecord));
-    // console.log(JSON.parse(JSON.stringify(theFetchedRecord)));
-    console.log("passenger::", passenger);
-    Object.assign(passenger, theFetchedRecord);
+    // console.log(JSON.parse(JSON.stringify(theFetchedRecord))); 
+    Object.assign(passenger.value, theFetchedRecord); 
   }
 
   else {

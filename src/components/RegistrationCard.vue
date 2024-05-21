@@ -1,69 +1,43 @@
 <template>
     <div class="theform-page">
         <div class="container mt-5">
-            {{ $route.params }}
-            formData: {{ formData }}
+            <!-- <p class="bg-success-subtle ps-4 d-flex">  <br>
+            <div> form Data: <br>{{ formData }}</div>  </p> -->
+
             <form>
-
-                <fieldset v-if="0" class="inputs-group p-3 p-md-4 mb-4 bg-primary-subtle rounded">
-                    <div class="row row-cols-md-2 row-cols-lg-4 ">
-                        <div class="mb-4">
-                            <label for="tripNumber" class="form-label">Trip Number:</label>
-                            <input type="text" class="form-control" id="tripNumber" v-model="form.tripNumber" disabled>
-                        </div>
-                        <div class="mb-4">
-                            <label for="portOfArrival" class="form-label">Port of Arrival:</label>
-                            <select class="form-select" id="portOfArrival" v-model="form.portOfArrival" disabled>
-                                <option selected>Choose...</option>
-                                <option value="Hurghada"> Hurghada </option>
-                                <!-- Add options here -->
-                            </select>
-                        </div>
-                        <div class="mb-4">
-                            <label for="dateArrival" class="form-label">Date of Arrival:</label>
-                            <input type="date" class="form-control" id="dateArrival" v-model="form.dateArrival"
-                                disabled>
-                        </div>
-                        <div class="mb-4">
-                            <label for="transportAgency" class="form-label">Transport Agency:</label>
-                            <input type="text" class="form-control" id="transportAgency" v-model="form.transportAgency"
-                                disabled>
-                        </div>
-                    </div>
-                </fieldset>
-
-                <ul v-else class="row list list-inline p-3 p-md-4 mb-4 bg-primary-subtle rounded">
-                    <li class="col"> <strong>Trip Number:</strong> {{ trip.tripNumber }}</li>
-                    <li class="col"> <strong>Port of Arrival:</strong> {{ trip.portOfArrival }}</li>
-                    <li class="col"> <strong>Date of Arrival:</strong> {{ trip.dateArrival }}</li>
-                    <li class="col"> <strong>Transport Agency:</strong> {{ trip.transportAgency }}</li>
+                <ul class="row list list-inline p-3 p-md-4 mb-4 bg-primary-subtle rounded">
+                    <li class="col"> <strong>Trip Number:</strong> {{ tripDetails.tripNumber }}</li>
+                    <li class="col"> <strong> Arrival Port:</strong> {{ tripDetails.portOfArrival }}</li>
+                    <li class="col"> <strong> Arrival Date:</strong> {{ tripDetails.dateArrival }}</li>
+                    <li class="col"> <strong> Agency:</strong> {{ tripDetails.transportAgency }}</li>
                 </ul>
 
                 <fieldset class="inputs-group p-3 p-md-5 my-4 border-danger border   rounded">
                     <div class="row ">
 
-                        <div class=" mb-4 col-md-2 col-lg-4 ">
+                        <div class="mb-4 col-md-2 col-lg-4 ">
                             <label for="fullName" class="form-label">Full Name:</label>
-                            <input type="text" class="form-control" id="fullName" v-model="form.fullName" required>
+                            <input type="text" class="form-control" id="fullName" v-model="formData.full_name" required>
                         </div>
 
 
                         <div class=" mb-4 col-md-2 col-lg-4">
                             <label for="passportNumber" class="form-label">Passport Number:</label>
-                            <input type="text" class="form-control" id="passportNumber" v-model="form.passportNumber">
+                            <input type="text" class="form-control" id="passportNumber"
+                                v-model="formData.passport_number">
                         </div>
                         <div class=" mb-4 col-md-2 col-lg-4">
                             <label for="seatNo" class="form-label">Seat No.:</label>
-                            <input type="text" class="form-control" id="seatNo" v-model="form.seatNo">
+                            <input type="text" class="form-control" id="seatNo" v-model="formData.seat_number">
                         </div>
                         <div class=" mb-4 col-md-2 col-lg-4">
                             <label for="phone" class="form-label">Phone Number in Egypt:</label>
-                            <input type="text" class="form-control" id="phone" v-model="form.phone" required>
+                            <input type="text" class="form-control" id="phone" v-model="formData.phone_number" required>
                         </div>
 
                         <div class=" mb-4 col-md-2 col-lg-4">
                             <label for="nationality" class="form-label">Nationality:</label>
-                            <select class="form-select" id="nationality" v-model="form.nationality">
+                            <select class="form-select" id="nationality" v-model="formData.nationality">
                                 <option selected>Choose...</option>
                                 <option value="egyption"> Egyption </option>
                                 <!-- Add options here -->
@@ -73,37 +47,18 @@
 
                         <div class=" mb-4 col-md-2 col-lg-4">
                             <label for="occupation" class="form-label">Occupation or Job:</label>
-                            <input type="text" class="form-control" id="occupation" v-model="form.occupation">
+                            <input type="text" class="form-control" id="occupation" v-model="formData.occupation">
                         </div>
 
-
-                        <div class="form-group mb-4 col-md-2 col-lg-4">
-                            <label class="form-label">Date of Birth:</label>
-                            <div class="date-fields d-flex justify-content-between">
-                                <select class="form-select" id="dobDay" name="dobDay" v-model="form.dobDay" required>
-                                    <option selected value="0"> Day ...</option>
-                                    <option v-for="day in 31" :value="day" :key="day">{{ day }}</option>
-                                </select>
-                                <select class="form-select" id="dobMonth" name="dobMonth" v-model="form.dobMonth"
-                                    required>
-                                    <option selected value="0"> Month ...</option>
-                                    <option v-for="month in 12" :value="month" :key="month">{{ month }}</option>
-                                </select>
-                                <select class="form-select" id="dobYear" name="dobYear" v-model="form.dobYear" required>
-                                    <option selected value="0"> Year ...</option>
-                                    <option v-for="year in 100" :value="2025 - year" :key="year">{{ 2025 - year }}
-                                    </option>
-                                </select>
-                                <!-- <input class="form-control" type="number" min="1920" :max="2024" placeholder="Year"
-                                    id="dobYear" name="dobYear" v-model="form.dobYear"> -->
-                            </div>
+                        <div class=" mb-4 col-md-2 col-lg-4">
+                            <label for="dobDay" class="form-label">Date of Birth:</label>
+                            <input type="date" class="form-control" id="dobDay" v-model="formData.dobDay">
                         </div>
+
                         <div class=" mb-4 col-md-2 col-lg-4">
                             <label for="email" class="form-label">Email:</label>
-                            <input type="email" class="form-control" id="email" v-model="form.email">
+                            <input type="email" class="form-control" id="email" v-model="formData.email">
                         </div>
-
-
 
 
                         <div class=" my-3 col-12">
@@ -112,8 +67,8 @@
 
 
                         <div class=" mb-4 col-md-2 col-lg-4">
-                            <label for="governorate" class="form-label">Governorate: {{ form.governorate }} </label>
-                            <select class="form-select" id="governorate" v-model="form.governorate" required>
+                            <label for="governorate" class="form-label">Governorate: {{ formData.governorate }} </label>
+                            <select class="form-select" id="governorate" v-model="formData.governorate" required>
                                 <option selected value="">Choose... </option>
                                 <option v-for="(_, governorate) in countries_list" :key="governorate"
                                     :value="governorate"> {{ governorate }}
@@ -122,23 +77,24 @@
                         </div>
 
                         <div class=" mb-4 col-md-2 col-lg-4">
-                            <label for="region" class="form-label">Region/Department: {{ form.region }} </label>
-                            <select class="form-select" id="region" v-model="form.region">
+                            <label for="region" class="form-label">Region/Department: {{ formData.region }} </label>
+                            <select class="form-select" id="region" v-model="formData.region">
                                 <option selected value="">Choose...</option>
-                                <option v-for="(cities, cityIndex ) in countries_list[form.governorate]"
-                                    :key="cityIndex" :value="cityIndex">
+                                <option v-for="(cities, cityIndex ) in countries_list[formData.governorate]"
+                                    :key="cityIndex" :value="countries_list[formData.governorate][cityIndex]">
                                     {{ cities }} </option>
                             </select>
                         </div>
 
                         <div class=" mb-4 col-md-2 col-lg-4">
                             <label for="address" class="form-label">Address:</label>
-                            <input type="text" class="form-control" id="address" v-model="form.address" required>
+                            <input type="text" class="form-control" id="address" v-model="formData.address" required>
                         </div>
                     </div>
                     <hr class="border" />
                     <div class="form-check mt-4">
-                        <input class="form-check-input" type="checkbox" id="fieldsetCheck">
+                        <input class="form-check-input" type="checkbox" id="fieldsetCheck"
+                            v-model="formData.confirmation">
                         <label class="form-check-label" for="fieldsetCheck">
                             {{ confirmationText }}
                         </label>
@@ -147,8 +103,6 @@
                         <p class="mb-0"> <strong>Note:</strong> {{ note }}</p>
                     </div>
                 </fieldset>
-
-
                 <slot></slot>
             </form>
 
@@ -157,27 +111,19 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
-import { storeToRefs } from 'pinia'
-
 import { useFormDataStore } from '@/stores/formData'
+import { useRoute } from "vue-router";
+
 const formDataStore = useFormDataStore();
 const { _, countries_list } = formDataStore;
 
+const route = useRoute();
 
-import { usePassengersStore } from '@/stores/passengers'
-const passengersStore = usePassengersStore()
-const { passenger, trip } = storeToRefs(passengersStore)
-
-
-
-const { formData: data } = defineProps(['formData'])
-
+const { formData } = defineProps(['formData'])
+console.log(route.query);
+const tripDetails = route.query;
 const confirmationText = "I hereby confirm that I have read and understood the above Questions and have answered them truthfully."
 const note = "If you suffer from any symptoms or change your address Call (105)."
 
-const form = reactive({
-    governorate: '',
-    region: '',
-})
+
 </script>

@@ -15,45 +15,46 @@ function getToday() {
 
 
 const usePassengersStore = defineStore('passengers', {
-    state: () => ({
-        trip: {
-            tripNumber: "A 255",
-            portOfArrival: 'Hurghada',
-            dateArrival: getToday(),
-            transportAgency: 'AMC air',
-        },
+    state: () => {
+        return {
+            trip: {
+                tripNumber: "B_55",
+                portOfArrival: 'Hurghada',
+                dateArrival: getToday(),
+                transportAgency: 'AMC air',
+            },
 
-        passengersList: [],
-        passenger: {
-            full_name: '',
-            passport_number: '',
+            passengersList: [],
 
-            seat_number: '',
-            phone_number: '',
+            passenger: {
+                full_name: '',
+                passport_number: '',
 
-            nationality: 'egyption',
-            governorate: '',
-            region: '',
-            address: '',
-            dobDay: '',
-            confirmation: false,
-            created_at: new Date().toLocaleString()
-        },
-    }),
+                seat_number: '',
+                phone_number: '',
 
+                nationality: '',
+                governorate: '',
+                region: '',
+                address: '',
+                dobDay: '',
+                confirmation: false,
+                created_at: new Date().toLocaleString()
+            },
+        }
+    },
 
     getters: {}, // = computed() properties of the store 
-
 
     actions: {
         subscribeToPassengersChannel() {
             console.log("subscribeToPassengersChannel");
         },
 
-        async getAllPassengers(recordId) {
+        async getAllPassengers(tripId) {
 
             try {
-                const passengersListCol = collection(db, "passengers", recordId, "list");
+                const passengersListCol = collection(db, "passengers", tripId, "list");
                 const listSnapshot = await getDocs(passengersListCol);
                 const passengersList = listSnapshot.docs.map(doc => {
                     let data = doc.data();
@@ -65,7 +66,7 @@ const usePassengersStore = defineStore('passengers', {
                     // console.log("Document data:", passengersList.length, passengersList);
                     this.passengersList = passengersList
                 } else {
-                    throw Error("No such document for that ID!", recordId)
+                    throw Error("No such document for that ID!", tripId)
                 }
 
             } catch (error) {
@@ -74,9 +75,9 @@ const usePassengersStore = defineStore('passengers', {
             }
         },
 
-        async addPassenger(recordId, passengerObj) {
+        async addPassenger(tripId, passengerObj) {
             console.log('Creating...');
-            const passengersListCol = collection(db, "passengers", recordId, "list");
+            const passengersListCol = collection(db, "passengers", tripId, "list");
 
             try {
                 const docRef = await addDoc(passengersListCol, passengerObj);
@@ -94,8 +95,13 @@ const usePassengersStore = defineStore('passengers', {
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
+                    console.log("this.passenger:", this.passenger);
+
                     console.log("Document data:", docSnap.data());
-                    return docSnap.data()
+                    this.passenger = docSnap.data();
+                    console.log("this.passenger:", this.passenger);
+
+                    // return docSnap.data()
                 } else {
                     // docSnap.data() will be undefined in this case 
                     throw Error("No such document for that ID!", tripId)
@@ -106,24 +112,14 @@ const usePassengersStore = defineStore('passengers', {
             }
         },
 
-        async updatePassenger(id, passengerObj) {
-            console.log('Updating', id, passengerObj);
+        async updatePassenger(tripId, passengerId, passengerObj) {
+            console.log('Updating', tripId, passengerId, passengerObj);
+           
             try {
-                const { data, error } = await supabase
-                    .from('passengers')
-                    // .update({ records: 88 })
-                    .update(passengerObj)
-                    .eq('id', id)
-                    .select()
-                if (data) {
-                    console.log(data);
-                    return data
-                } else {
-                    throw error
-                }
+                await setDoc(doc(db, "passengers", tripId, "list", passengerId), passengerObj);
+
             } catch (err) {
                 console.error(err)
-                return []
             }
         },
 

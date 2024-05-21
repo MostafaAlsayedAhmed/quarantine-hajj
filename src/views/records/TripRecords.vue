@@ -1,12 +1,11 @@
 <template>
   <div class="container my-5">
-    <pre> {{ rows }}</pre>
+    <!-- <pre> {{ rows[0] }}</pre> -->
     <div class="d-flex justify-content-between mb-3">
       <div>
-        <h2> Records of the Trip #{{ $route.params.tripId }} </h2>
+        <h2> {{ rows.length }} Records of the Trip #{{ $route.params.tripId }} </h2>
       </div>
-      <div>
-        <!-- name: 'Record', -->
+      <div> 
         <router-link :to="{ path: `/schedule/${$route.params.tripId}/records/NewRecord`, params: { isNew: true } }"
           type="button" class="btn btn-success">Add New Record</router-link>
       </div>

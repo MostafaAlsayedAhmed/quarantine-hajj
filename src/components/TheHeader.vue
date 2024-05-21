@@ -17,9 +17,9 @@
                     <li class="nav-item">
                         <RouterLink class="nav-link" :to="{ name: 'TripRecords' }">Records</RouterLink>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <RouterLink class="nav-link" :to="{ name: 'Registration' }">Registration</RouterLink>
-                    </li>
+                    </li> -->
                 </ul>
 
             </div>

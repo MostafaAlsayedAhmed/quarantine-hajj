@@ -24,7 +24,7 @@ export function useAuth() {
         let { error } = await supabase.auth.signOut();
         router.currentRoute.value.path === '/' ?
             router.replace('/login') :
-            router.replace('/')
+            router.replace('/login')
         router.go()
     }
     return {

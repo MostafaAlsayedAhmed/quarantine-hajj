@@ -1,21 +1,15 @@
+ TODO 1 -- Firestore: Update Records Count
+https://chatgpt.com/c/9fc5deeb-3eea-4324-ae29-d7eb03136a11
+https://chatgpt.com/share/54850437-a56b-466e-8830-fbd126d6634a
 
-#Edit 'create_passenger_table' function
+ TODO 2 -- Firebase Auth
 
-BEGIN
-    EXECUTE format('CREATE TABLE %I (
-        passenger_id uuid NOT NULL DEFAULT gen_random_uuid(),
-        created_at timestamp with time zone NOT NULL DEFAULT now(),
-        full_name text NULL,
-        passport_number text NULL,
-        seat_number text NULL,
-        phone_number text NULL,
-        governorate text NULL,
-        region text NULL,
-        address text NULL,
-        email text NULL,
-        CONSTRAINT %I_pkey PRIMARY KEY (passenger_id)
-        ) TABLESPACE pg_default', 
-        'passengers_' || NEW.id, 
-        'passengers_' || NEW.id);
-    RETURN NEW;
-END;
+
+ TODO 3 -- Delete a Passenger
+
+
+ TODO 4 -- RegistrationCard design withot Auth (remove header)
+
+
+
+ 

@@ -6,18 +6,7 @@ import { useAuth } from "@/composables/useAuth"
 import TheHeader from '@/components/TheHeader.vue';
 import TheFooter from '@/components/TheFooter.vue';
 const { isLoggedIn, setUser, user, Loading, router, route, RouterView } = useAuth()
-
-
-const trips = ref([])
-async function getCountries() {
-  const { data } = await supabase.from('passengers').select()
-  trips.value = data
-
-  // let { data: passengers, error } = await supabase
-  //   .from('passengers')
-  //   .select('created_at')
-}
-
+ 
 
 const state = reactive({
   loading: false
