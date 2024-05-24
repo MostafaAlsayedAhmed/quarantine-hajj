@@ -123,18 +123,10 @@ const usePassengersStore = defineStore('passengers', {
             }
         },
 
-        async deletePassenger(id) {
-
+        async deletePassenger(tripId, passengerId) {
             try {
-                const { error } = await supabase
-                    .from('passengers')
-                    .delete()
-                    .eq('id', id)
-                if (error) {
-                    throw error
-                } else {
-                    console.log('Deleted', id);
-                }
+                const deleteThePassenger = await deleteDoc(doc(db, "passengers", tripId, "list", passengerId));
+                if (deleteThePassenger) alert(`The Passenger ${passengerId} Deleted!`)
 
             } catch (err) {
                 console.error(err)

@@ -6,7 +6,7 @@ import { useAuth } from "@/composables/useAuth"
 import TheHeader from '@/components/TheHeader.vue';
 import TheFooter from '@/components/TheFooter.vue';
 const { isLoggedIn, setUser, user, Loading, router, route, RouterView } = useAuth()
- 
+
 
 const state = reactive({
   loading: false
@@ -15,11 +15,13 @@ const state = reactive({
 onMounted(() => {
   supabase.auth.onAuthStateChange((_, session) => {
     state.loading = true
-     
+
     // if (router)
     //   console.log(router?.currentRoute?.value.name);
-    if (!session) {
-      router.push('/')
+    if (!session && route.name === 'Registration') {
+      router.push({
+        name: 'Registration', 
+      })
     } else {
       setUser(session ? session.user : null)
       router.forward()

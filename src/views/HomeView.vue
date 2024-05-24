@@ -86,7 +86,7 @@ const login = async () => {
                 <label for="floatingPassword">Seat Number</label>
               </div>
 
-              <button @click="this.$router.push({ name: 'Registration', params: { tripUniqueId: '182' } })"
+              <button @click="this.$router.push({ name: 'Registration', params: { tripId: 'AAA' } })"
                 class="w-100 btn btn-lg btn-primary" type="submit">Continue</button>
               <hr class="my-4">
               <small class="text-body-secondary">By clicking Sign up, you agree to the terms of use.</small>

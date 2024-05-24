@@ -13,9 +13,9 @@ const useTripsStore = defineStore("trips", {
     getters: {},// = computed() properties of the store
 
     actions: {
-        subscribeToTripsChannel() {
-            console.log("subscribeToTripsChannel");
-        },
+        // subscribeToTripsChannel() {
+        //     console.log("subscribeToTripsChannel");
+        // },
 
         async createTripPartition(trip_id) {
             try {
@@ -58,7 +58,7 @@ const useTripsStore = defineStore("trips", {
                 console.log("Document written with ID: ", tripDocRef.id);
 
                 if (tripDocRef) {
-                      // Create a specific document ID in the "Passengers" collection
+                    // Create a specific document ID in the "Passengers" collection
                     const passengerDocRef = doc(db, "passengers", tripDocRef.id);
                     await setDoc(passengerDocRef, {});
 
@@ -110,7 +110,6 @@ const useTripsStore = defineStore("trips", {
         },
 
         async deleteTrip(id) {
-
             try {
                 await deleteDoc(doc(db, "trips", id));
 

@@ -48,20 +48,19 @@ const { router, isLoggedIn, signOut } = useAuth()
                 <li class="ms-3"><a class="text-body-secondary" href="#"><svg class="bi" width="24" height="24">
                             <use xlink:href="#facebook"></use>
                         </svg></a></li>
-                <!-- isLoggedIn {{ isLoggedIn }} {{ $route.name === 'Home' }} -->
-                <!-- && ($route.name === 'login' || $route.name === 'Home') -->
-                <li v-if="!isLoggedIn" class="nav-item dropdown ms-5">
+                <!-- is LoggedIn {{ isLoggedIn  }} {{ $route.name === 'Home' }} -->
+                     <!-- && ($route.name === 'login' || $route.name === 'Home') -->
+                <li v-if="!isLoggedIn && $route.name !== 'Registration'" class="nav-item dropdown ms-5">
                     <button class="btn btn-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
                         Admin
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-dark">
-
+                    <ul class="dropdown-menu dropdown-menu-dark"> 
                         <li><router-link class="dropdown-item" to="/login">login</router-link></li>
                         <li><a class="dropdown-item" href="#">Something else here</a></li>
                     </ul>
                 </li>
 
-                <li v-else>
+                <li v-if="isLoggedIn && $route.name !== 'Registration'">
                     <button class="btn btn-dark ms-5" @click.prevent="signOut">
                         Log Out
                     </button>

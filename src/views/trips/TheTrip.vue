@@ -2,9 +2,7 @@
   <div class="thetrip-page">
     <div class="container">
       <div class="container mt-5">
-        <!-- <pre> {{ trip }}</pre>  <hr>-->
-
-        <!-- <pre> {{ tripsList }}</pre> -->
+        <!-- <pre> {{ trip }}</pre> <hr> <pre> {{ tripsList }} </pre> -->
 
         <div class="text-center">
           <div class="d-flex align-content-between justify-content-between align-items-center">
@@ -19,10 +17,7 @@
           </div>
         </div>
       </div>
-
-
-
-      <!-- <pre>trip: {{ trip }}</pre> -->
+ 
       <div class="container my-5">
         <form @submit.prevent="submitForm">
           <fieldset class="inputs-group p-3 p-md-5 mb-4 border-danger border  -subtle rounded">
@@ -97,9 +92,7 @@
     </div>
   </div>
 </template>
-
-
-
+ 
 <script setup>
 import { ref, reactive, onMounted, readonly, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -134,7 +127,7 @@ let trip = reactive({
   done: false,
   link: '',
   created_at: new Date().toLocaleString(),
-//  id: ''
+  //  id: ''
 
 
 })
@@ -150,7 +143,7 @@ async function submitForm() {
   }
 
   // Redirect 
- router.push({ name: 'Schedule' });
+  router.push({ name: 'Schedule' });
 }
 
 async function deleteTheTrip() {
@@ -169,7 +162,7 @@ onMounted(async () => {
     // Load the trip data for editing
     const theFetchedTrip = await getTrip(tripId) || {};
     console.log(theFetchedTrip);
-    Object.assign(trip, theFetchedTrip );
+    Object.assign(trip, theFetchedTrip);
     // console.log('Fetching data for id', tripId);
     // console.log("theFetchedTrip:", theFetchedTrip[0]);
     // console.log("trip:",JSON.parse(JSON.stringify(trip)) ); 

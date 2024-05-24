@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import HomeView from '../views/HomeView.vue'
+import HomeView from '../views/HomeView.vue' 
 import TripsSchedule from '../views/trips/TripsSchedule.vue'
 import TheTrip from '../views/trips/TheTrip.vue';
 import TheRecord from '../views/records/TheRecord.vue';
@@ -21,11 +21,21 @@ const router = createRouter({
     },
 
     {
-      path: '/trip/:tripUniqueId?/registration',
+      path: '/trip/:tripId?/registration',
       name: 'Registration',
       component: TheRecord,
-      // props: true
+      children:[
+        {
+          path: 'Thanks',
+          name: 'ThanksView', 
+          component: () => import('@/components/ThanksPage.vue'),
+        },
+        
+      ],
+      props: true
     },
+
+ 
 
 
 
@@ -52,7 +62,7 @@ const router = createRouter({
       path: '/schedule/:tripId?/records',
       name: 'TripRecords',
       component: () => import('../views/records/TripRecords.vue'),
-      props: true
+      props: true//  ,props: route => ({ query: route.query.q })
     },
 
     {
@@ -70,11 +80,11 @@ router.beforeEach((to, from, next) => {
   // console.log("beforeEach:", to, from);
 
 
-  // if (to.name === 'team-members') {
-  //     next()
-  // } else {
-  //     next({ name: 'team-members', params: { teamId: 't2' } })
-  // }
+  if (to.name === 'Registration') {
+    next()
+  } else {
+    //     next({ name: 'team-members', params: { teamId: 't2' } })
+  }
   next();
 });
 

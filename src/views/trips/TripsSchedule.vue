@@ -18,12 +18,11 @@
       :styleClass="tableStyle">
 
       <template #table-row="props">
-        <span v-if="props.column.field == 'trip_name'"> 
-          <a :href="`/schedule/${props.row.id}/records/NewRecord?tripNumber=${props.row.trip_number}&portOfArrival=${props.row.arrival_port}&dateArrival=${props.row.arrival_date.split('T')[0]}&transportAgency=${props.row.transport_agency}`"
-            target="_blank">
+        <span v-if="props.column.field == 'trip_name'">
+          <!-- <a :href="`/schedule/${props.row.id}/records/NewRecord?${tripInfoLink(props.row)}`" target="_blank"> -->
+          <a :href="`/trip/${props.row.id}/registration?${tripInfoLink(props.row)}`" target="_blank">
             {{ props.row.trip_name }}
-
-
+ 
             <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" fill=" #0a58ca" viewBox="0 0 24 24"
               width="12" height="12">
               <path
@@ -37,7 +36,16 @@
 
 
         <span v-if="props.column.field == 'records'">
-          <router-link style="text-decoration: none" :to="{ name: 'TripRecords', params: { tripId: props.row.id } }">
+
+          <router-link style="text-decoration: none" target="_blank" :to="{
+          name: 'TripRecords', params: { tripId: props.row.id },
+          query: {
+            trip_number: props.row.trip_number,
+            arrival_port: props.row.arrival_port,
+            arrival_date: props.row.arrival_date,
+            transport_agency: props.row.transport_agency,
+          }
+        }">
             <span style="text-decoration: underline;  color: blue;" class="w-100">
               {{ props.row.records }}/{{ props.row.passengers }}</span>
             <strong v-if="props.row.passengers" class="ms-1">
@@ -56,6 +64,7 @@
         </span>
       </template>
     </vue-good-table>
+
   </div>
 </template>
 
@@ -67,7 +76,7 @@ import { useTripsStore } from '@/stores/trips'
 
 const tripsStore = useTripsStore()
 const { tripsList } = storeToRefs(tripsStore)
-const { getAllTrips, subscribeToTripsChannel } = tripsStore
+const { getAllTrips } = tripsStore
 
 const tableStyle = ref('vgt-table striped bordered')
 const columns = ref([
@@ -85,11 +94,18 @@ const columns = ref([
 ]);
 const rows = tripsList || ref([]);
 
+function tripInfoLink(trip) {
+  if (trip) {
+    return `trip_number=${trip.trip_number}&arrival_port=${trip.arrival_port}&arrival_date=${trip.arrival_date.split('T')[0]}&transport_agency=${trip.transport_agency}`
+  }
+}
+
+
+
 onMounted(() => {
   getAllTrips()
 });
-
-subscribeToTripsChannel(); 
+ 
 </script>
 
 <style>

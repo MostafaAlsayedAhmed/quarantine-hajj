@@ -1,18 +1,20 @@
-import {   RouterView, useRouter, useRoute } from "vue-router";
+import { RouterView, useRouter, useRoute } from "vue-router";
 import { useUserStore } from "@/stores/user";
 import { supabase } from "@/supabase.js";
-import Loading from "@/components/Loading.vue";
 import { storeToRefs } from "pinia";
+import { provide } from 'vue'
+import Loading from "@/components/Loading.vue";
 
 export function useAuth() {
     let userStore = useUserStore();
     let { user, setUser } = userStore;
-
-    const { isLoggedIn } = storeToRefs(userStore);
-
     const router = useRouter();
     const route = useRoute();
-
+ 
+    const { isLoggedIn } = storeToRefs(userStore);
+    
+    provide('isLoggedIn', isLoggedIn)
+    
     const validateEmail = () => {
         if (!str) return false;
         const pattern =

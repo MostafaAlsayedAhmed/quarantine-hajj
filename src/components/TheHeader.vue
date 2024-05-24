@@ -1,7 +1,14 @@
 <template>
     <header class="">
         <div class="container">
-            <div class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom align-items-center">
+            <div v-if="$route.name == 'Registration' || $route.name == 'ThanksView'"
+                class="align-items-center d-flex flex-column pt-3">
+                <img class="logo" alt="Vue logo" src="@/assets/images/logo_transparent.png">
+                <span class="fs-4 fw-bold">{{ heading }}</span>
+            </div>
+
+
+            <div v-else class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom align-items-center">
 
                 <RouterLink to="/"
                     class=" d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
@@ -25,7 +32,6 @@
             </div>
         </div>
     </header>
-
 </template>
 <script setup>
 import { ref } from 'vue'
